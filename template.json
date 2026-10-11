@@ -1,0 +1,350 @@
+{
+  "name": "Moodle 5.3 LMS Online Learning Platform",
+  "description": "Courses, quizzes and grades for schools and teams, with cron and caching.",
+  "category": "Other",
+  "tags": [
+    "moodle",
+    "lms",
+    "e-learning",
+    "education",
+    "php",
+    "postgres",
+    "redis"
+  ],
+  "image": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/moodle.svg",
+  "upstream": {
+    "repo": "moodle/moodle",
+    "version": "5.3 (Build: 20261005), tag v5.3.0",
+    "checked": "2026-10-11"
+  },
+  "services": {
+    "Moodle": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/moodle.svg",
+      "source": {
+        "repo": "baranberkay96/moodle-railway",
+        "rootDirectory": "/services/moodle"
+      },
+      "startCommand": null,
+      "preDeployCommand": null,
+      "healthcheckPath": "/healthz",
+      "healthcheckTimeout": 1200,
+      "restartPolicyType": "ON_FAILURE",
+      "restartPolicyMaxRetries": 10,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": true,
+      "targetPort": 80,
+      "tcpProxy": null,
+      "volume": {
+        "mountPath": "/var/moodledata"
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "80",
+          "description": "Port Apache listens on; Railway routes traffic and healthchecks here.",
+          "required": false
+        },
+        "MOODLE_URL": {
+          "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+          "description": "Site URL ($CFG->wwwroot). Change it when you add a custom domain; Moodle redirects every request to this host.",
+          "required": false
+        },
+        "MOODLE_DB_TYPE": {
+          "defaultValue": "pgsql",
+          "description": "Database driver (Railway Postgres).",
+          "required": false
+        },
+        "MOODLE_DB_HOST": {
+          "defaultValue": "${{Postgres.RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Postgres host on the private network.",
+          "required": false
+        },
+        "MOODLE_DB_PORT": {
+          "defaultValue": "5432",
+          "description": "Postgres port.",
+          "required": false
+        },
+        "MOODLE_DB_NAME": {
+          "defaultValue": "${{Postgres.PGDATABASE}}",
+          "description": "Database name.",
+          "required": false
+        },
+        "MOODLE_DB_USER": {
+          "defaultValue": "${{Postgres.PGUSER}}",
+          "description": "Database user.",
+          "required": false
+        },
+        "MOODLE_DB_PASSWORD": {
+          "defaultValue": "${{Postgres.PGPASSWORD}}",
+          "description": "Database password.",
+          "required": false
+        },
+        "MOODLE_DB_PREFIX": {
+          "defaultValue": "mdl_",
+          "description": "Table prefix; do not change after installation.",
+          "required": false
+        },
+        "MOODLE_REDIS_HOST": {
+          "defaultValue": "${{Redis.RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Redis for sessions and the application cache. Empty = database sessions and file cache.",
+          "required": false
+        },
+        "MOODLE_REDIS_PORT": {
+          "defaultValue": "6379",
+          "description": "Redis port.",
+          "required": false
+        },
+        "MOODLE_REDIS_PASSWORD": {
+          "defaultValue": "${{Redis.REDIS_PASSWORD}}",
+          "description": "Redis password.",
+          "required": false
+        },
+        "MOODLE_ADMIN_USER": {
+          "defaultValue": "admin",
+          "description": "Username of the site administrator created at installation.",
+          "required": false
+        },
+        "MOODLE_ADMIN_PASSWORD": {
+          "defaultValue": "${{secret(24)}}",
+          "description": "Password of the site administrator (used once at installation; change it in your profile afterwards).",
+          "required": false
+        },
+        "MOODLE_ADMIN_EMAIL": {
+          "defaultValue": "",
+          "description": "E-mail of the site administrator (also the support contact).",
+          "required": true
+        },
+        "MOODLE_SITE_NAME": {
+          "defaultValue": "Moodle",
+          "description": "Full site name set at installation (can be changed later in Site administration).",
+          "required": false
+        },
+        "MOODLE_SITE_SHORTNAME": {
+          "defaultValue": "moodle",
+          "description": "Short site name set at installation.",
+          "required": false
+        },
+        "MOODLE_LANG": {
+          "defaultValue": "en",
+          "description": "Installation language code, e.g. en, de, es, tr (the language pack is downloaded during install).",
+          "required": false
+        },
+        "MOODLE_NOREPLY_ADDRESS": {
+          "defaultValue": "",
+          "description": "No-reply sender address for notifications, e.g. noreply@yourschool.org. Optional.",
+          "required": false
+        },
+        "MOODLE_SMTP_HOST": {
+          "defaultValue": "",
+          "description": "SMTP host for outgoing mail (outbound SMTP needs Railway Pro). Empty = configure later in Site administration. Optional.",
+          "required": false
+        },
+        "MOODLE_SMTP_PORT": {
+          "defaultValue": "587",
+          "description": "SMTP port.",
+          "required": false
+        },
+        "MOODLE_SMTP_SECURE": {
+          "defaultValue": "tls",
+          "description": "SMTP security: tls (STARTTLS), ssl, or empty.",
+          "required": false
+        },
+        "MOODLE_SMTP_USER": {
+          "defaultValue": "",
+          "description": "SMTP username. Optional.",
+          "required": false
+        },
+        "MOODLE_SMTP_PASSWORD": {
+          "defaultValue": "",
+          "description": "SMTP password. Optional.",
+          "required": false
+        },
+        "MOODLE_CRON_ENABLED": {
+          "defaultValue": "true",
+          "description": "Run Moodle cron inside this service every minute (needs moodledata, so it cannot be a separate Railway cron service).",
+          "required": false
+        },
+        "MOODLE_CRON_INTERVAL": {
+          "defaultValue": "60",
+          "description": "Seconds between cron starts (Moodle recommends every minute).",
+          "required": false
+        },
+        "MOODLE_CRON_MAX_RUNNERS": {
+          "defaultValue": "3",
+          "description": "Maximum overlapping cron runs (each keeps polling for tasks for a few minutes).",
+          "required": false
+        },
+        "MOODLE_CRON_VERBOSE": {
+          "defaultValue": "false",
+          "description": "Stream cron output to the logs. Task logs are always available in Site administration > Server > Tasks > Task logs.",
+          "required": false
+        },
+        "PHP_MEMORY_LIMIT": {
+          "defaultValue": "256M",
+          "description": "PHP memory per web request.",
+          "required": false
+        },
+        "PHP_UPLOAD_MAX_FILESIZE": {
+          "defaultValue": "128M",
+          "description": "Largest single upload; Moodle's own course/site limits apply on top.",
+          "required": false
+        },
+        "PHP_POST_MAX_SIZE": {
+          "defaultValue": "130M",
+          "description": "Largest request body (keep slightly above PHP_UPLOAD_MAX_FILESIZE).",
+          "required": false
+        },
+        "PHP_TIMEZONE": {
+          "defaultValue": "UTC",
+          "description": "PHP default timezone (Moodle's site timezone is set in Site administration).",
+          "required": false
+        },
+        "APACHE_MAX_REQUEST_WORKERS": {
+          "defaultValue": "25",
+          "description": "Maximum concurrent PHP requests. Peak RAM is roughly this x 60-100 MB; raise with the service memory.",
+          "required": false
+        },
+        "MOODLE_CONFIG_EXTRA": {
+          "defaultValue": "",
+          "description": "Optional raw PHP appended to config.php (e.g. $CFG->theme = 'boost';). Evaluated last. Advanced.",
+          "required": false
+        }
+      }
+    },
+    "Postgres": {
+      "icon": "https://devicons.railway.app/i/postgresql.svg",
+      "source": {
+        "image": "ghcr.io/railwayapp-templates/postgres-ssl:18"
+      },
+      "startCommand": null,
+      "preDeployCommand": null,
+      "healthcheckPath": null,
+      "healthcheckTimeout": null,
+      "restartPolicyType": "ON_FAILURE",
+      "restartPolicyMaxRetries": 10,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": false,
+      "targetPort": null,
+      "tcpProxy": null,
+      "volume": {
+        "mountPath": "/var/lib/postgresql/data"
+      },
+      "variables": {
+        "PGDATA": {
+          "defaultValue": "/var/lib/postgresql/data/pgdata",
+          "description": "Location where the database will be initialized.",
+          "required": false
+        },
+        "PGHOST": {
+          "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Railway Private Domain Name.",
+          "required": false
+        },
+        "PGPORT": {
+          "defaultValue": "5432",
+          "description": "Port to connect to Postgres.",
+          "required": false
+        },
+        "PGUSER": {
+          "defaultValue": "${{ POSTGRES_USER }}",
+          "description": "Required variable for Data panel.",
+          "required": false
+        },
+        "PGDATABASE": {
+          "defaultValue": "${{POSTGRES_DB}}",
+          "description": "Required variable for the data panel.",
+          "required": false
+        },
+        "PGPASSWORD": {
+          "defaultValue": "${{POSTGRES_PASSWORD}}",
+          "description": "Required variable for Data panel.",
+          "required": false
+        },
+        "POSTGRES_DB": {
+          "defaultValue": "railway",
+          "description": "Default database created when image is started.",
+          "required": false
+        },
+        "DATABASE_URL": {
+          "defaultValue": "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/${{PGDATABASE}}",
+          "description": "URL to connect to Postgres database.",
+          "required": false
+        },
+        "POSTGRES_USER": {
+          "defaultValue": "postgres",
+          "description": "User to connect to Postgres DB.",
+          "required": false
+        },
+        "SSL_CERT_DAYS": {
+          "defaultValue": "820",
+          "description": "SSL certificate expiry in days.",
+          "required": false
+        },
+        "POSTGRES_PASSWORD": {
+          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\") }}",
+          "description": "Password to connect to DB.",
+          "required": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "60",
+          "description": "Allow Postgres to cleanly shut down.",
+          "required": false
+        }
+      }
+    },
+    "Redis": {
+      "icon": "https://cdn.sanity.io/images/sy1jschh/production/0ce0bfdcfbdbf69662b1116671f97c2dd788b655-157x157.svg",
+      "source": {
+        "image": "redis:8.2"
+      },
+      "startCommand": "/bin/sh -c \"rm -rf $RAILWAY_VOLUME_MOUNT_PATH/lost+found/ && exec docker-entrypoint.sh redis-server --requirepass $REDIS_PASSWORD --save 60 1 --dir $RAILWAY_VOLUME_MOUNT_PATH\"",
+      "preDeployCommand": null,
+      "healthcheckPath": null,
+      "healthcheckTimeout": null,
+      "restartPolicyType": "ON_FAILURE",
+      "restartPolicyMaxRetries": 10,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": false,
+      "targetPort": null,
+      "tcpProxy": null,
+      "volume": {
+        "mountPath": "/data"
+      },
+      "variables": {
+        "REDISHOST": {
+          "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Private network hostname of the Redis service, only resolvable from services in the same environment.",
+          "required": false
+        },
+        "REDISPORT": {
+          "defaultValue": "6379",
+          "description": "Port that Redis listens on.",
+          "required": false
+        },
+        "REDISUSER": {
+          "defaultValue": "default",
+          "description": "Username for authenticating with Redis.",
+          "required": false
+        },
+        "REDIS_URL": {
+          "defaultValue": "redis://${{ REDISUSER }}:${{ REDIS_PASSWORD }}@${{ REDISHOST }}:${{ REDISPORT }}",
+          "description": "Connection string for connecting to Redis using the private network.",
+          "required": false
+        },
+        "REDISPASSWORD": {
+          "defaultValue": "${{REDIS_PASSWORD}}",
+          "description": "Alias of REDIS_PASSWORD for clients that expect the unseparated name.",
+          "required": false
+        },
+        "REDIS_PASSWORD": {
+          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\") }}",
+          "description": "Randomly generated password for authenticating with Redis.",
+          "required": false
+        }
+      }
+    }
+  },
+  "buckets": []
+}
