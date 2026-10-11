@@ -1,5 +1,7 @@
 # Deploy and Host Moodle with Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/moodle-53-lms-online-learning-platform?referralCode=20H68q)
+
 Moodle is the open-source learning management system used by schools, universities and companies to run courses, quizzes, assignments and gradebooks. This community template runs Moodle 5.3 LTS on Railway from the official release, with PostgreSQL, Redis caching, cron every minute and persistent storage for course files.
 
 ## About Hosting Moodle
